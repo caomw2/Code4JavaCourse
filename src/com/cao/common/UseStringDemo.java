@@ -66,6 +66,21 @@ public class UseStringDemo {
 
 		}
 
+		// 7.判断两个字符串的内容是否相等
+
+		String name1 = "张三";
+		String name2 = "王五";
+
+		if (name1.equals(name2)) {
+			System.out.println("name1与name2的内容相同.");
+		} else {
+			System.out.println("name1与name2的内容不相同.");
+		}
+
+		// 8.连接两个字符串
+		String name = name1.concat(name2);
+		System.out.println("name: " + name);
+
 	}
 
 }
