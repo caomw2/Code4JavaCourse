@@ -1,5 +1,5 @@
 /**
- * 
+ * 如何定义类
  */
 package com.cao.common;
 
