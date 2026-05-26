@@ -30,18 +30,19 @@ public class InsertData {
 		}
 
 		try {
-			conn = DriverManager.getConnection(URL, "root", "668899");// 建立和数据库的连接，并返回表示连接的Connection对象
+			conn = DriverManager.getConnection(URL, "root", "123456");// 建立和数据库的连接，并返回表示连接的Connection对象
 
 			System.out.println("数据库连接成功!!!");
 
-			String insertSql = "INSERT INTO users (id, name, age, sex) VALUES (?,?, ?, ?)";
-			// String insertSql = "INSERT INTO users (name, age, sex) VALUES (?, ?, ?)";
+			// String insertSql = "INSERT INTO users (id, name, age, sex) VALUES (?,?, ?,
+			// ?)";
+			String insertSql = "INSERT INTO users (name, age, sex) VALUES (?, ?, ?)";
 			preparedStatement = conn.prepareStatement(insertSql);
 
-			preparedStatement.setInt(1, 10);
-			preparedStatement.setString(2, "王老六");
-			preparedStatement.setInt(3, 35);
-			preparedStatement.setString(4, "男");
+			// preparedStatement.setInt(1, 10);
+			preparedStatement.setString(1, "王老六");
+			preparedStatement.setInt(2, 35);
+			preparedStatement.setString(3, "男");
 
 			int rowsAffected = preparedStatement.executeUpdate();
 

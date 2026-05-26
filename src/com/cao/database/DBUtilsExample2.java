@@ -1,17 +1,19 @@
 package com.cao.database;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Properties;
 
-public final class DBUtils {
-
-	public DBUtils() {
-		// TODO Auto-generated constructor stub
-	}
+/**
+ * 数据库连接工具类 封装了获取连接、关闭资源等常用操作
+ */
+public class DBUtilsExample2 {
 
 	// 数据库连接参数（可以从配置文件读取）
 	private static String driver;
@@ -21,19 +23,40 @@ public final class DBUtils {
 
 	// 静态代码块，在类加载时执行一次，用于初始化数据库连接参数
 	static {
-		loadDriver();
+		loadConfig();
 	}
 
 	/**
 	 * 从配置文件加载数据库连接参数
 	 */
-	private static void loadDriver() {
+	private static void loadConfig() {
+		Properties props = new Properties();
+		try (InputStream input = DBUtilsExample2.class.getClassLoader().getResourceAsStream("db.properties")) {
+			if (input == null) {
+				System.err.println("找不到 db.properties 配置文件，使用默认参数");
+				// 设置默认值
+				driver = "com.mysql.cj.jdbc.Driver";
+				url = "jdbc:mysql://localhost:3306/miscoursedb?useSSL=false&serverTimezone=UTC";
+				username = "root";
+				password = "password";
+				return;
+			}
 
-		// 设置默认值
-		driver = "com.mysql.cj.jdbc.Driver";
-		url = "jdbc:mysql://localhost:3306/miscoursedb?useSSL=false&serverTimezone=UTC";
-		username = "root";
-		password = "123456";
+			props.load(input);
+			driver = props.getProperty("driver", "com.mysql.cj.jdbc.Driver");
+			url = props.getProperty("url", "jdbc:mysql://localhost:3306/miscoursedb?useSSL=false&serverTimezone=UTC");
+			username = props.getProperty("username", "root");
+			password = props.getProperty("password", "password");
+
+		} catch (IOException e) {
+			System.err.println("加载数据库配置文件失败: " + e.getMessage());
+			e.printStackTrace();
+			// 设置默认值以避免空指针异常
+			driver = "com.mysql.cj.jdbc.Driver";
+			url = "jdbc:mysql://localhost:3306/miscoursedb?useSSL=false&serverTimezone=UTC";
+			username = "root";
+			password = "password";
+		}
 
 		try {
 			Class.forName(driver);
@@ -42,7 +65,7 @@ public final class DBUtils {
 			System.err.println("数据库驱动加载失败: " + e.getMessage());
 			e.printStackTrace();
 		}
-	}// load driver
+	}
 
 	/**
 	 * 获取数据库连接
@@ -185,4 +208,41 @@ public final class DBUtils {
 		return result;
 	}
 
+	// 测试方法
+	public static void main(String[] args) {
+		// 测试连接
+		Connection conn = getConnection();
+		if (conn != null) {
+			System.out.println("连接测试成功！");
+
+			// 测试执行更新操作
+			String insertSql = "INSERT INTO test_table (name, age) VALUES (?, ?)";
+			int insertResult = executeUpdate(insertSql, "测试用户", 25);
+			System.out.println("插入操作结果: " + insertResult);
+
+			// 测试执行查询操作
+			String selectSql = "SELECT * FROM users WHERE age > ?";
+			ResultSet rs = executeQuery(selectSql, 20);
+			if (rs != null) {
+				try {
+					while (rs.next()) {
+						System.out.println("ID: " + rs.getInt("id") + ", Name: " + rs.getString("name") + ", Age: "
+								+ rs.getInt("age"));
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						rs.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+			closeConnection(conn);
+		} else {
+			System.out.println("连接测试失败！");
+		}
+	}
 }

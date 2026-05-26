@@ -30,7 +30,7 @@ public class QueryData {
 		}
 
 		try {
-			conn = DriverManager.getConnection(URL, "root", "668899");// 建立和数据库的连接，并返回表示连接的Connection对象
+			conn = DriverManager.getConnection(URL, "root", "123456");// 建立和数据库的连接，并返回表示连接的Connection对象
 
 			System.out.println("数据库连接成功!!!");
 

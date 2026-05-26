@@ -2,7 +2,6 @@ package com.cao.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -19,7 +18,6 @@ public class UseJDBC {
 		// characterEncoding=utf-8是指定字符编码格式为UTF8
 		Connection conn = null;
 		Statement stmtStatement = null;
-		ResultSet resultSet = null;
 		// Connection接口代表Java程序和数据库的连接对象，只有获得该连接对象后，才能访问数据库，并操作数据表
 		try {
 
@@ -30,28 +28,12 @@ public class UseJDBC {
 		}
 
 		try {
-			conn = DriverManager.getConnection(URL, "root", "668899");// 建立和数据库的连接，并返回表示连接的Connection对象
+			conn = DriverManager.getConnection(URL, "root", "123456");// 建立和数据库的连接，并返回表示连接的Connection对象
 
 			System.out.println("数据库连接成功!!!");
 
-			stmtStatement =conn.createStatement();
-			String sqlString ="select * from users";
-			//stmtStatement =conn.prepareStatement(sqlString);
-			
-			resultSet = stmtStatement.executeQuery(sqlString);
-			
-			
-			while(resultSet.next()) {
-                int id = resultSet.getInt("idusers");
-                String name = resultSet.getString("name");
-                int age = resultSet.getInt("age");
-                String sex = resultSet.getString("sex");
-                
-               System.out.printf("%d\t%s\t%d\t%s%n", id, name, age,sex);
-               // System.out.printf(id);
-               
-            }
-			
+			stmtStatement = conn.prepareStatement("select * from users");
+			// ResultSet resultSet = stmtStatement.executeQuery(stmtStatement);
 
 		} catch (Exception e) {// 未连接成功，执行下面的异常处理
 
@@ -61,10 +43,9 @@ public class UseJDBC {
 		} finally {
 
 			// 关闭数据库链接
-             resultSet.close();
+
 			stmtStatement.close();
 			conn.close();
-			System.out.println("关闭数据库链接!!!");
 		}
 	}
 }
